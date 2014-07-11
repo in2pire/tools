@@ -1,0 +1,25 @@
+#!/bin/bash
+
+parse_drupal () {
+  local OUT="$(type drush 2>/dev/null)"
+
+  if [ -n "$OUT" ]; then
+    OUT="$(drush core-status 2>/dev/null | grep "Drupal version" | cut -d ':' -f 2 | tr -d ' ' | sed -E 's/[^a-zA-Z0-9_.-]//g')"
+
+    if [ -n "$OUT" ]; then
+      OUT="v$OUT"
+      local GIT_OUT="$(parse_git_branch_or_tag)";
+
+      if [ -n "$GIT_OUT" ]; then
+        OUT="$OUT ($GIT_OUT)"
+      fi
+
+      echo -n $OUT
+    fi
+  fi
+}
+
+prompt_drupal () {
+  local OUT="$(parse_drupal)"
+  echo -n $OUT
+}

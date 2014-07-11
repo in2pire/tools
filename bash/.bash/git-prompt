@@ -1,0 +1,33 @@
+#!/bin/bash
+
+parse_git_branch () {
+  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/' | tr -d ' '
+}
+
+parse_git_tag () {
+  git describe --tags 2> /dev/null | tr -d ' '
+}
+
+parse_git_branch_or_tag() {
+  local OUT="$(parse_git_branch)";
+
+  if [ "$OUT" == "(no branch)" ]; then
+    OUT="$(parse_git_tag)";
+  fi
+
+  if [[ $OUT == *detachedfrom* ]]; then
+    OUT="$(parse_git_tag)";
+  fi
+
+  echo -n $OUT
+}
+
+prompt_git () {
+  local OUT="$(parse_git_branch_or_tag)"
+
+  if [ -n "$OUT" ]; then
+    OUT="($OUT)"
+  fi
+
+  echo -n $OUT
+}

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+parse_universal () {
+  local OUT="$(prompt_drupal)";
+
+  if [ -z "$OUT" ]; then
+    OUT="$(prompt_git)";
+  fi
+
+  echo -n $OUT
+}
+
+prompt_universal () {
+  local OUT="$(parse_universal)"
+
+  if [ -n "$OUT" ]; then
+    OUT="\x20$OUT";
+  fi
+
+  echo -en "$OUT"
+}
